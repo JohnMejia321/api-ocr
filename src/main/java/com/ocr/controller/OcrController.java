@@ -21,6 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Properties;
+import java.util.AbstractMap.SimpleEntry;
+
+import com.hazelcast.jet.kafka.KafkaSinks;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 @RestController
 public class OcrController {
@@ -59,13 +64,20 @@ public class OcrController {
 
 			BatchStage<String> source = p.readFrom(TestSources.items(ocrResult));
 
-			BatchStage<HazelcastJsonValue> transformed = source.map(item -> {
+			BatchStage<SimpleEntry<Object, Object>> transformed = source.map(item -> {
 				String jsonString = JsonUtil.toJson(item);
-				return new HazelcastJsonValue(jsonString);
+				HazelcastJsonValue jsonValue = new HazelcastJsonValue(jsonString);
+				return new SimpleEntry<>(null, jsonValue);
 			});
 
-			// Escribe el resultado en el registro de Hazelcast Jet
-			transformed.writeTo(Sinks.logger());
+			// Configurar las propiedades de Kafka
+			Properties props = new Properties();
+			props.setProperty("bootstrap.servers", "localhost:9092"); // Reemplazar con la URL de tu servidor Kafka
+			props.setProperty("key.serializer", StringSerializer.class.getCanonicalName());
+			props.setProperty("value.serializer", StringSerializer.class.getCanonicalName());
+
+			// Escribe el resultado en el tópico de Kafka
+			transformed.writeTo(KafkaSinks.kafka(props, "topic1")); // Reemplazar con el nombre de tu tópico
 
 			// Ejecutar el pipeline
 			Jet.newJetInstance();

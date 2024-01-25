@@ -41,14 +41,28 @@
 <dependency>
     <groupId>com.hazelcast.jet</groupId>
     <artifactId>hazelcast-jet</artifactId>
-    <version>4.5</version> <!-- La versión puede variar -->
+    <version>4.5.4</version> <!-- La versión puede variar -->
 </dependency>
+
+<dependency>
+    <groupId>com.hazelcast.jet</groupId>
+    <artifactId>hazelcast-jet-kafka</artifactId>
+    <version>4.5.4</version>
+</dependency>
+
 
 <dependency>
 	<groupId>com.hazelcast</groupId>
 	<artifactId>hazelcast-all</artifactId>
 	<version>4.2.8</version>
 </dependency>
+
+<dependency>
+    <groupId>org.apache.kafka</groupId>
+    <artifactId>kafka-clients</artifactId>
+    <version>3.6.1</version>
+</dependency>
+
 
 
 
