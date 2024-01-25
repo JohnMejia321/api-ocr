@@ -30,6 +30,30 @@
             <version>8.5.4</version>
         </dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20231013</version>
+</dependency>
+
+<!-- Hazelcast Jet -->
+<dependency>
+    <groupId>com.hazelcast.jet</groupId>
+    <artifactId>hazelcast-jet</artifactId>
+    <version>4.5</version> <!-- La versión puede variar -->
+</dependency>
+
+<dependency>
+	<groupId>com.hazelcast</groupId>
+	<artifactId>hazelcast-all</artifactId>
+	<version>4.2.8</version>
+</dependency>
+
+
+
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

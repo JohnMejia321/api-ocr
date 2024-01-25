@@ -1,9 +1,15 @@
 package com.ocr.controller;
 
+import com.hazelcast.jet.Jet;
+import com.hazelcast.jet.pipeline.BatchStage;
+import com.hazelcast.jet.pipeline.Pipeline;
+import com.hazelcast.jet.pipeline.Sinks;
+import com.hazelcast.jet.pipeline.test.TestSources;
+import com.hazelcast.jet.json.JsonUtil;
+import com.hazelcast.core.HazelcastJsonValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.ocr.model.OcrModel;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -43,12 +49,29 @@ public class OcrController {
 			Files.copy(pdfStream, pdfFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 			// Realizar la operación de OCR en el archivo PDF local
-			String result = instance.doOCR(pdfFile);
+			String ocrResult = instance.doOCR(pdfFile);
 
 			// Eliminar el archivo PDF temporal
 			pdfFile.delete();
 
-			return result;
+			// Convertir el resultado a JSON usando Hazelcast Jet
+			Pipeline p = Pipeline.create();
+
+			BatchStage<String> source = p.readFrom(TestSources.items(ocrResult));
+
+			BatchStage<HazelcastJsonValue> transformed = source.map(item -> {
+				String jsonString = JsonUtil.toJson(item);
+				return new HazelcastJsonValue(jsonString);
+			});
+
+			// Escribe el resultado en el registro de Hazelcast Jet
+			transformed.writeTo(Sinks.logger());
+
+			// Ejecutar el pipeline
+			Jet.newJetInstance();
+
+			// Devolver el resultado de OCR como cadena
+			return ocrResult;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			return "Error while performing OCR on the PDF file from MinIO";
