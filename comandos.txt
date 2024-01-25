@@ -1,5 +1,4 @@
  curl -X POST -H "Content-Type: multipart/form-data" -F "file=@C:/Users/John-Mejia/Documents/programacion/inner-consulting/microservicios/doc.pdf" http://localhost:8080/app-minio/upload
 
 
-curl -X POST -H "Content-Type: multipart/form-data" -F "DestinationLanguage=eng" -F "PdfFile=doc.pdf" http://localhost:1907/api/ocr
-
+$ curl -X POST -H "Content-Type: multipart/form-data" -F "DestinationLanguage=eng" -F "PdfFile=doc.pdf" http://localhost:8081/api/upload

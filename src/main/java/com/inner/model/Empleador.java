@@ -1,22 +1,17 @@
-package com.ocr.model;
-
-
+package com.inner.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
-
-
-
-public class OcrModel {
+public class Empleador {
 
 	private String DestinationLanguage;
 
 	private MultipartFile Image;
 
-	public OcrModel() {
+	public Empleador() {
 	}
 
-	public OcrModel(String DestinationLanguage, MultipartFile Image) {
+	public Empleador(String DestinationLanguage, MultipartFile Image) {
 		this.DestinationLanguage = DestinationLanguage;
 		this.Image = Image;
 
