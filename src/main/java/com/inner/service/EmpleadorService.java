@@ -11,6 +11,7 @@ import com.hazelcast.jet.kafka.KafkaSinks;
 
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.TesseractException;
 
@@ -18,8 +19,13 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -76,6 +82,20 @@ public class EmpleadorService {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return "Error while performing OCR on the PDF file from MinIO";
+        }
+    }
+
+    public String uploadFile(MultipartFile file) {
+        try {
+            InputStream inputStream = file.getInputStream();
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket("my-bucket")
+                    .object(file.getOriginalFilename())
+                    .stream(inputStream, inputStream.available(), -1)
+                    .build());
+            return "File uploaded successfully.";
+        } catch (Exception e) {
+            return "Failed to upload file.";
         }
     }
 }
